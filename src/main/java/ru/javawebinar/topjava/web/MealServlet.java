@@ -16,12 +16,17 @@ import java.time.LocalDateTime;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
+    private final MealDaoInMemory mealDao;
+
+    public MealServlet() {
+        this.mealDao = new MealDaoInMemory();
+    }
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         log.debug("redirect to meals");
         req.setAttribute("meals",
-            new MealService(new MealDaoInMemory()).findAllWithExceeded(2000));
+            new MealService(mealDao).findAllWithExceeded(2000));
         req.getRequestDispatcher("meals.jsp").forward(req, resp);
     }
 
@@ -48,20 +53,20 @@ public class MealServlet extends HttpServlet {
 
     private void add(final HttpServletRequest req) {
         Meal food = extractFood(req);
-        new MealService(new MealDaoInMemory()).add(food);
+        new MealService(mealDao).add(food);
         log.debug("Add new food");
     }
 
     private void update(final HttpServletRequest req) {
         long id = Long.parseLong(req.getParameter("id"));
         Meal meal = extractFood(req).setId(id);
-        new MealService(new MealDaoInMemory()).update(meal);
+        new MealService(mealDao).update(meal);
         log.debug("Update meal: {}", meal);
     }
 
     private void delete(final HttpServletRequest req) {
         long id = Long.parseLong(req.getParameter("id"));
-        new MealService(new MealDaoInMemory()).delete(id);
+        new MealService(mealDao).delete(id);
         log.debug("Delete meal with id: {}", id);
     }
 

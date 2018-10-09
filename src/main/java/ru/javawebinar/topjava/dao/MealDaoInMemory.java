@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class MealDaoInMemory implements MealDao<Meal, Long> {
     private static final Logger log = LoggerFactory.getLogger(MealDaoInMemory.class);
 
-    private static Map<Long, Meal> meals = new ConcurrentHashMap<Long, Meal>() {
+    private final Map<Long, Meal> meals = new ConcurrentHashMap<Long, Meal>() {
         {
             put(1L, new Meal(1L, LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500));
             put(2L, new Meal(2L, LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000));
