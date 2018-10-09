@@ -7,15 +7,12 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealWithExceed;
 import ru.javawebinar.topjava.util.MealsUtil;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class MealService {
     private static final Logger log = LoggerFactory.getLogger(MealService.class);
 
-    private final AtomicLong counter = new AtomicLong(6);
     private MealDao mealDao;
 
     public MealService(final MealDao mealDao) {
@@ -31,8 +28,8 @@ public class MealService {
         return mealDao.findAll();
     }
 
-    public Meal add(final LocalDateTime dateTime, final String description, final int calories) {
-        return mealDao.create(new Meal(counter.incrementAndGet(), dateTime, description, calories));
+    public Meal add(final Meal meal) {
+        return mealDao.create(meal);
     }
 
     public Meal update(final Meal meal) {

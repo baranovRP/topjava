@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class MealDaoInMemory implements MealDao {
     private static final Logger log = LoggerFactory.getLogger(MealDaoInMemory.class);
-
     public static Map<Long, Meal> meals = new ConcurrentHashMap<Long, Meal>() {
         {
             put(1L, new Meal(1L, LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500));
@@ -24,6 +24,7 @@ public class MealDaoInMemory implements MealDao {
             put(6L, new Meal(6L, LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510));
         }
     };
+    private final AtomicLong counter = new AtomicLong(6);
 
     @Override
     public Meal findOne(final Long id) {
@@ -40,7 +41,8 @@ public class MealDaoInMemory implements MealDao {
     @Override
     public Meal create(final Meal entity) {
         log.debug("Create meal: {}", entity);
-        return meals.put(entity.getId(), entity);
+        long id = counter.incrementAndGet();
+        return meals.put(id, entity.setId(id));
     }
 
     @Override

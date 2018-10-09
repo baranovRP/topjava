@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.web;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.javawebinar.topjava.dao.MealDaoInMemory;
+import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.TimeUtil;
 
@@ -22,7 +23,7 @@ public class AddMealServlet extends HttpServlet {
         LocalDateTime dateTime = TimeUtil.parseDateTime(req.getParameter("dateTime"));
         String description = req.getParameter("description");
         int calories = Integer.parseInt(req.getParameter("calories"));
-        new MealService(new MealDaoInMemory()).add(dateTime, description, calories);
+        new MealService(new MealDaoInMemory()).add(new Meal(dateTime, description, calories));
         log.debug("Add new meal");
         resp.sendRedirect(String.format("%s/meals", req.getContextPath()));
     }
