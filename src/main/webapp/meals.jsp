@@ -15,7 +15,7 @@
         <th>Date Time</th>
         <th>Description</th>
         <th>Calories</th>
-        <th>Action</th>
+        <th colspan="2">Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -38,15 +38,12 @@
                 <td><input style="${fontColor}"
                            type="text" name="calories"
                            value="<c:out value="${meal.calories}" />"/></td>
-                <td><input type="submit" value="Update"/></td>
+                <td><input type="submit" name="update" value="Update"/></td>
             </form>
-            <td>
-                <form method="post"
-                      action='meals/delete?id=<c:out value="${meal.id}"/>'>
-                    <button type="submit" name="delete" value="Delete">Delete
-                    </button>
-                </form>
-            </td>
+            <form method="post"
+                  action='meals/delete?id=<c:out value="${meal.id}"/>'>
+                <td><input type="submit" name="delete" value="Delete"/></td>
+            </form>
         </tr>
     </c:forEach>
     <tr>
@@ -58,8 +55,7 @@
                        value="<c:out value="${meal.description}" />"/></td>
             <td><input type="text" name="calories"
                        value="<c:out value="${meal.calories}" />"/></td>
-            <td><input
-                type="submit" value="Add"/></td>
+            <td><input type="submit" name="add" value="Add"/></td>
         </form>
     </tr>
     </tbody>
