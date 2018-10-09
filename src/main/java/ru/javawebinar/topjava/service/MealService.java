@@ -20,7 +20,7 @@ public class MealService {
     }
 
     public Meal findOne(final long id) {
-        return mealDao.findOne(id);
+        return (Meal) mealDao.findOne(id);
     }
 
     public List<Meal> findAll() {
@@ -29,11 +29,11 @@ public class MealService {
     }
 
     public Meal add(final Meal meal) {
-        return mealDao.create(meal);
+        return (Meal) mealDao.create(meal);
     }
 
     public Meal update(final Meal meal) {
-        return mealDao.update(meal);
+        return (Meal) mealDao.update(meal);
     }
 
     public void delete(final long id) {

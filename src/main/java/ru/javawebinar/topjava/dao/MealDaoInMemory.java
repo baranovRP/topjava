@@ -12,9 +12,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class MealDaoInMemory implements MealDao {
+public class MealDaoInMemory implements MealDao<Meal, Long> {
     private static final Logger log = LoggerFactory.getLogger(MealDaoInMemory.class);
-    public static Map<Long, Meal> meals = new ConcurrentHashMap<Long, Meal>() {
+
+    private static Map<Long, Meal> meals = new ConcurrentHashMap<Long, Meal>() {
         {
             put(1L, new Meal(1L, LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500));
             put(2L, new Meal(2L, LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000));
@@ -49,12 +50,6 @@ public class MealDaoInMemory implements MealDao {
     public Meal update(final Meal entity) {
         log.debug("Update meal: {}", entity);
         return meals.replace(entity.getId(), entity);
-    }
-
-    @Override
-    public void delete(final Meal entity) {
-        log.debug("Delete meal: {}", entity);
-        deleteById(entity.getId());
     }
 
     @Override

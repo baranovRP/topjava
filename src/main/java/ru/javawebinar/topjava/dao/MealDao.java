@@ -1,6 +1,22 @@
 package ru.javawebinar.topjava.dao;
 
-import ru.javawebinar.topjava.model.Meal;
+import java.util.List;
 
-public interface MealDao extends ModelDao<Meal, Long> {
+/**
+ * DAO interface.
+ *
+ * @param <T> type
+ * @param <K> key
+ */
+public interface MealDao<T, K> {
+
+    T findOne(K key);
+
+    List<T> findAll();
+
+    T create(T entity);
+
+    T update(T entity);
+
+    void deleteById(K key);
 }
