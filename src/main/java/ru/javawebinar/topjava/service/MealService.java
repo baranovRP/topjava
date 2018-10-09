@@ -36,10 +36,6 @@ public class MealService {
         return mealDao.update(meal);
     }
 
-    public void delete(final Meal entity) {
-        mealDao.delete(entity);
-    }
-
     public void delete(final long id) {
         mealDao.deleteById(id);
     }

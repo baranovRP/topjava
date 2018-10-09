@@ -18,7 +18,5 @@ public interface ModelDao<T, K> {
 
     T update(T entity);
 
-    void delete(T entity);
-
     void deleteById(K key);
 }
