@@ -13,14 +13,14 @@ import java.util.List;
 public class MealService {
     private static final Logger log = LoggerFactory.getLogger(MealService.class);
 
-    private MealDao mealDao;
+    private MealDao<Meal, Long> mealDao;
 
-    public MealService(final MealDao mealDao) {
+    public MealService(final MealDao<Meal, Long> mealDao) {
         this.mealDao = mealDao;
     }
 
     public Meal findOne(final long id) {
-        return (Meal) mealDao.findOne(id);
+        return mealDao.findOne(id);
     }
 
     public List<Meal> findAll() {
@@ -29,11 +29,11 @@ public class MealService {
     }
 
     public Meal add(final Meal meal) {
-        return (Meal) mealDao.create(meal);
+        return mealDao.create(meal);
     }
 
     public Meal update(final Meal meal) {
-        return (Meal) mealDao.update(meal);
+        return mealDao.update(meal);
     }
 
     public void delete(final long id) {
