@@ -16,58 +16,57 @@ import java.time.LocalDateTime;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
-    private final MealDaoInMemory mealDao;
-
-    public MealServlet() {
-        this.mealDao = new MealDaoInMemory();
-    }
+    private static final String MEALS = "meals";
+    private final MealDaoInMemory mealDao = new MealDaoInMemory();
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        log.debug("redirect to meals");
-        req.setAttribute("meals",
+        log.debug("redirect to {}", MEALS);
+        req.setAttribute(MEALS,
             new MealService(mealDao).findAllWithExceeded(2000));
-        req.getRequestDispatcher("meals.jsp").forward(req, resp);
+        req.getRequestDispatcher(MEALS + ".jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("UTF-8");
-        String action = req.getServletPath();
+        String action = req.getParameter("action");
         switch (action) {
-            case "/meals/add":
-                add(req);
+            case "add":
+                add(req, resp);
                 break;
-            case "/meals/update":
-                update(req);
+            case "update":
+                update(req, resp);
                 break;
-            case "/meals/delete":
-                delete(req);
+            case "delete":
+                delete(req, resp);
                 break;
             default:
-                log.debug("Unknown action: {}", action);
-                throw new IllegalStateException("Unknown action");
+                resp.sendRedirect(String.format("%s/%s", req.getContextPath(), MEALS));
+                break;
         }
-        resp.sendRedirect(String.format("%s/meals", req.getContextPath()));
     }
 
-    private void add(final HttpServletRequest req) {
+    private void add(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
         Meal food = extractFood(req);
         new MealService(mealDao).add(food);
         log.debug("Add new food");
+        resp.sendRedirect(String.format("%s/%s", req.getContextPath(), MEALS));
     }
 
-    private void update(final HttpServletRequest req) {
+    private void update(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
         long id = Long.parseLong(req.getParameter("id"));
         Meal meal = extractFood(req).setId(id);
         new MealService(mealDao).update(meal);
         log.debug("Update meal: {}", meal);
+        resp.sendRedirect(String.format("%s/%s", req.getContextPath(), MEALS));
     }
 
-    private void delete(final HttpServletRequest req) {
+    private void delete(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
         long id = Long.parseLong(req.getParameter("id"));
         new MealService(mealDao).delete(id);
         log.debug("Delete meal with id: {}", id);
+        resp.sendRedirect(String.format("%s/%s", req.getContextPath(), MEALS));
     }
 
     private Meal extractFood(final HttpServletRequest req) {

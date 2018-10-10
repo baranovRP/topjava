@@ -26,7 +26,7 @@
             <javatime:format value="${meal.dateTime}"
                              pattern="yyyy-MM-dd HH:mm" var="formattedDate"/>
             <form method="post"
-                  action='meals/update?id=<c:out value="${meal.id}"/>'
+                  action='meals?action=update&id=<c:out value="${meal.id}"/>'
                   name="updateMealForm">
                 <td><input style="${fontColor}"
                            type="datetime" name="dateTime"
@@ -41,13 +41,13 @@
                 <td><input type="submit" name="update" value="Update"/></td>
             </form>
             <form method="post"
-                  action='meals/delete?id=<c:out value="${meal.id}"/>'>
+                  action='meals?action=delete&id=<c:out value="${meal.id}"/>'>
                 <td><input type="submit" name="delete" value="Delete"/></td>
             </form>
         </tr>
     </c:forEach>
     <tr>
-        <form method="post" action='meals/add' name="addMealForm">
+        <form method="post" action='meals?action=add' name="addMealForm">
             <td><input type="datetime" name="dateTime"
                        value="<c:out value="${meal.dateTime}" />"/>
             </td>
