@@ -49,7 +49,7 @@ public class MealDaoInMemory implements MealDao<Meal, Long> {
     @Override
     public Meal update(final Meal entity) {
         log.debug("Update meal: {}", entity);
-        return meals.replace(entity.getId(), entity);
+        return meals.put(entity.getId(), entity);
     }
 
     @Override
