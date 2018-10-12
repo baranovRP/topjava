@@ -1,9 +1,54 @@
 package ru.javawebinar.topjava.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import java.time.LocalDate;
+import java.util.Collection;
+
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
+
+@Service
 public class MealServiceImpl implements MealService {
 
-    private MealRepository repository;
+    private final MealRepository repository;
 
+    @Autowired
+    public MealServiceImpl(final MealRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    public Meal create(final Meal meal, final int userId) {
+        return repository.save(meal, userId);
+    }
+
+    @Override
+    public void delete(final int id, final int userId) throws NotFoundException {
+        checkNotFoundWithId(repository.delete(id, userId), id);
+    }
+
+    @Override
+    public Meal get(final int id, final int userId) throws NotFoundException {
+        return checkNotFoundWithId(repository.get(id, userId), id);
+    }
+
+    @Override
+    public void update(final Meal meal, final int userId) {
+        checkNotFoundWithId(repository.save(meal, userId), meal.getId());
+    }
+
+    @Override
+    public Collection<Meal> getAll() {
+        return repository.getAll();
+    }
+
+    @Override
+    public Collection<Meal> getAllBetween(final int userId, final LocalDate startDate,
+                                          final LocalDate endDate) {
+        return repository.getAllBetweenForUser(userId, startDate, endDate);
+    }
 }
