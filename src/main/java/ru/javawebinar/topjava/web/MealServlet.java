@@ -7,6 +7,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.to.MealWithExceed;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 import ru.javawebinar.topjava.web.user.AdminRestController;
 
@@ -16,32 +17,40 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
+import static ru.javawebinar.topjava.util.DateTimeUtil.parseDateOrGetDefault;
+import static ru.javawebinar.topjava.util.DateTimeUtil.parseTimeOrGetDefault;
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
 
-    //    private MealRepository repository;
+    private ConfigurableApplicationContext appCtx;
     private MealRestController mealRestController;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-//        repository = new InMemoryMealRepositoryImpl();
-//        mealRestController = new MealRestController();
-        try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml")) {
-            System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
-            AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
-            adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ROLE_ADMIN));
-            mealRestController = appCtx.getBean(MealRestController.class);
-            mealRestController.create(new Meal(LocalDateTime.of(2015, Month.MAY, 29, 20, 0), "Ужин", 510, 1), 1);
-        }
+        appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+        log.info("Bean definition names: {}", Arrays.toString(appCtx.getBeanDefinitionNames()));
+        AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
+        adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ROLE_ADMIN));
+        mealRestController = appCtx.getBean(MealRestController.class);
+        mealRestController.create(new Meal(LocalDateTime.of(2015, Month.MAY, 29, 20, 0), "Ужин", 510, 1), 1);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        appCtx.close();
     }
 
     @Override
@@ -78,6 +87,22 @@ public class MealServlet extends HttpServlet {
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
                 break;
+            case "filter":
+                log.info("filter");
+                LocalDate fromDate =
+                    parseDateOrGetDefault(request.getParameter("fromDate"), LocalDate.MIN);
+                LocalDate toDate =
+                    parseDateOrGetDefault(request.getParameter("toDate"), LocalDate.MAX);
+                LocalTime fromTime =
+                    parseTimeOrGetDefault(request.getParameter("fromTime"), LocalTime.MIN);
+                LocalTime toTime =
+                    parseTimeOrGetDefault(request.getParameter("toTime"), LocalTime.MAX);
+                List<MealWithExceed> allWithExceeded =
+                    mealRestController.getFilteredWithExceeded(fromDate, toDate, fromTime, toTime);
+                request.setAttribute("meals", allWithExceeded);
+                request.getRequestDispatcher("/meals.jsp").forward(request, response);
+                break;
+            case "cancel":
             case "all":
             default:
                 log.info("getAll");

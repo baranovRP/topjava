@@ -20,6 +20,22 @@
 <section>
     <h3><a href="index.html">Home</a></h3>
     <h2>Meals</h2>
+    <div>
+        <form action="meals">
+            <input type="text" value="filter" id="filter" name="action" hidden>
+            <label for="fromDate">From Date:</label>
+            <input type="date" value="" id="fromDate" name="fromDate">
+            <label for="toDate">To Date:</label>
+            <input type="date" value="" id="toDate" name="toDate">
+            <label for="fromTime">From Time:</label>
+            <input type="time" value="" id="fromTime" name="fromTime">
+            <label for="toTime">To Time:</label>
+            <input type="time" value="" id="toTime" name="toTime">
+            <button type="submit">Filter</button>
+            <button><a href="meals?action=cancel">Cancel</a></button>
+        </form>
+    </div>
+
     <a href="meals?action=create">Add Meal</a>
     <hr/>
     <table border="1" cellpadding="8" cellspacing="0">
@@ -36,9 +52,6 @@
             <jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.to.MealWithExceed"/>
             <tr class="${meal.exceed ? 'exceeded' : 'normal'}">
                 <td>
-                        <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>
-                        <%--<%=TimeUtil.toString(meal.getDateTime())%>--%>
-                        <%--${fn:replace(meal.dateTime, 'T', ' ')}--%>
                         ${fn:formatDateTime(meal.dateTime)}
                 </td>
                 <td>${meal.description}</td>
