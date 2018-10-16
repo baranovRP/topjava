@@ -7,7 +7,6 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
@@ -19,15 +18,14 @@ public abstract class AbstractMealController {
     @Autowired
     private MealService service;
 
-    public List<Meal> getAll() {
-        log.info("getAll");
-        return new ArrayList<>(service.getAll());
+    public List<Meal> getAll(final int userId) {
+        return this.getAll(userId, LocalDate.MAX, LocalDate.MIN);
     }
 
     public List<Meal> getAll(final int userId, final LocalDate startDate,
                              final LocalDate endDate) {
         log.info("getAll");
-        return new ArrayList<>(service.getAllBetween(userId, startDate, endDate));
+        return service.getAll(userId, startDate, endDate);
     }
 
     public Meal get(final int id, final int userId) {
@@ -46,12 +44,9 @@ public abstract class AbstractMealController {
         service.delete(id, userId);
     }
 
-    public void update(final Meal meal, final int userId) {
-        Integer id = meal.getId();
+    public void update(final Meal meal, final int id, final int userId) {
         log.info("update {} with id={}", meal, id);
-        if (id != null) {
-            assureIdConsistent(meal, id);
-        }
-        service.update(meal, userId);
+        assureIdConsistent(meal, id);
+        service.update(meal, id, userId);
     }
 }

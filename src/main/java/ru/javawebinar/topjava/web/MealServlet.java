@@ -28,7 +28,6 @@ import java.util.Objects;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.parseDateOrGetDefault;
 import static ru.javawebinar.topjava.util.DateTimeUtil.parseTimeOrGetDefault;
-import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
@@ -44,7 +43,10 @@ public class MealServlet extends HttpServlet {
         AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
         adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ROLE_ADMIN));
         mealRestController = appCtx.getBean(MealRestController.class);
-        mealRestController.create(new Meal(LocalDateTime.of(2015, Month.MAY, 29, 20, 0), "Ужин", 510, 1), 1);
+        mealRestController.create(new Meal(LocalDateTime.of(2015, Month.MAY, 29, 10, 0), "Завтрак", 510), 2);
+        mealRestController.create(new Meal(LocalDateTime.of(2015, Month.MAY, 29, 15, 0), "Обед", 1510), 2);
+        mealRestController.create(new Meal(LocalDateTime.of(2015, Month.MAY, 29, 21, 0), "Ужин", 510), 2);
+        mealRestController.create(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 1510), 2);
     }
 
     @Override
@@ -58,13 +60,14 @@ public class MealServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
 
-        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
+        Integer mealId = Integer.valueOf(id);
+        Meal meal = new Meal(id.isEmpty() ? null : mealId,
             LocalDateTime.parse(request.getParameter("dateTime")),
             request.getParameter("description"),
-            Integer.parseInt(request.getParameter("calories")), authUserId());
+            Integer.parseInt(request.getParameter("calories")));
 
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        mealRestController.update(meal);
+        mealRestController.update(meal, mealId);
         response.sendRedirect("meals");
     }
 

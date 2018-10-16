@@ -18,7 +18,7 @@ public class MealRestController extends AbstractMealController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     public List<Meal> getAll() {
-        return super.getAll();
+        return super.getAll(authUserId());
     }
 
     public List<MealWithExceed> getAllWithExceeded() {
@@ -45,7 +45,7 @@ public class MealRestController extends AbstractMealController {
         super.delete(id, authUserId());
     }
 
-    public void update(final Meal meal) {
-        super.update(meal, authUserId());
+    public void update(final Meal meal, final int id) {
+        super.update(meal, id, authUserId());
     }
 }
