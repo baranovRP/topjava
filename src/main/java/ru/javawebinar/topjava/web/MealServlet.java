@@ -17,17 +17,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import static ru.javawebinar.topjava.util.DateTimeUtil.parseDateOrGetDefault;
-import static ru.javawebinar.topjava.util.DateTimeUtil.parseTimeOrGetDefault;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
@@ -43,10 +37,6 @@ public class MealServlet extends HttpServlet {
         AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
         adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ROLE_ADMIN));
         mealRestController = appCtx.getBean(MealRestController.class);
-        mealRestController.create(new Meal(LocalDateTime.of(2015, Month.MAY, 29, 10, 0), "Завтрак", 510), 2);
-        mealRestController.create(new Meal(LocalDateTime.of(2015, Month.MAY, 29, 15, 0), "Обед", 1510), 2);
-        mealRestController.create(new Meal(LocalDateTime.of(2015, Month.MAY, 29, 21, 0), "Ужин", 510), 2);
-        mealRestController.create(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 1510), 2);
     }
 
     @Override
@@ -60,14 +50,17 @@ public class MealServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
 
-        Integer mealId = Integer.valueOf(id);
-        Meal meal = new Meal(id.isEmpty() ? null : mealId,
+        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
             LocalDateTime.parse(request.getParameter("dateTime")),
             request.getParameter("description"),
             Integer.parseInt(request.getParameter("calories")));
 
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        mealRestController.update(meal, mealId);
+        if (meal.isNew()) {
+            mealRestController.create(meal);
+        } else {
+            mealRestController.update(meal, meal.getId());
+        }
         response.sendRedirect("meals");
     }
 
@@ -92,14 +85,10 @@ public class MealServlet extends HttpServlet {
                 break;
             case "filter":
                 log.info("filter");
-                LocalDate fromDate =
-                    parseDateOrGetDefault(request.getParameter("fromDate"), LocalDate.MIN);
-                LocalDate toDate =
-                    parseDateOrGetDefault(request.getParameter("toDate"), LocalDate.MAX);
-                LocalTime fromTime =
-                    parseTimeOrGetDefault(request.getParameter("fromTime"), LocalTime.MIN);
-                LocalTime toTime =
-                    parseTimeOrGetDefault(request.getParameter("toTime"), LocalTime.MAX);
+                String fromDate = request.getParameter("fromDate");
+                String toDate = request.getParameter("toDate");
+                String fromTime = request.getParameter("fromTime");
+                String toTime = request.getParameter("toTime");
                 List<MealWithExceed> allWithExceeded =
                     mealRestController.getFilteredWithExceeded(fromDate, toDate, fromTime, toTime);
                 request.setAttribute("meals", allWithExceeded);

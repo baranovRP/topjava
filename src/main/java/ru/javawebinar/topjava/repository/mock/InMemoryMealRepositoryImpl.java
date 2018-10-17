@@ -7,10 +7,7 @@ import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -21,40 +18,44 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     private AtomicInteger counter = new AtomicInteger(0);
 
     {
-        repository.put(1, new ConcurrentHashMap<>());
-        repository.put(2, new ConcurrentHashMap<>());
-        MealsUtil.MEALS.forEach(m -> this.save(m, m.getId(), 1));
+        MealsUtil.MEALS_USER_1.forEach(m -> this.save(m, 1));
+        MealsUtil.MEALS_USER_2.forEach(m -> this.save(m, 2));
     }
 
     @Override
-    public Meal save(final Meal meal, final Integer id, final int userId) {
-        Map<Integer, Meal> items = repository.getOrDefault(userId, new HashMap<>());
-        if (items.isEmpty()) {
-            return null;
-        }
+    public Meal save(final Meal meal, final int userId) {
+        Map<Integer, Meal> items =
+            repository.computeIfAbsent(userId, k -> new HashMap<>());
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             items.put(meal.getId(), meal);
             return meal;
         }
         // treat case: update, but absent in storage
-        return items.computeIfPresent(id, (mId, oldMeal) -> meal);
+        return items.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
     public boolean delete(final Integer id, final int userId) {
-        return repository.getOrDefault(userId, new HashMap<>()).remove(id) != null;
+        Map<Integer, Meal> meals = repository.get(userId);
+        return !(meals == null || meals.remove(id) == null);
     }
 
     @Override
     public Meal get(final Integer id, final int userId) {
-        return repository.getOrDefault(userId, new HashMap<>()).get(id);
+        Map<Integer, Meal> meals = repository.get(userId);
+        return meals == null ? null : meals.get(id);
     }
 
     @Override
-    public List<Meal> getAll(final int userId, LocalDate startDate,
-                             final LocalDate endDate) {
-        return repository.getOrDefault(userId, new HashMap<>()).values().stream()
+    public List<Meal> getAll(final int userId) {
+        return new ArrayList<>(repository.get(userId).values());
+    }
+
+    @Override
+    public List<Meal> getAllBetween(final int userId, LocalDate startDate,
+                                    final LocalDate endDate) {
+        return getAll(userId).stream()
             .filter(m -> DateTimeUtil.isBetween(m.getDate(), startDate, endDate))
             .sorted(Comparator
                 .comparing(Meal::getDateTime).reversed()

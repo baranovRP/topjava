@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 
 public class MealsUtil {
-    public static final List<Meal> MEALS = Arrays.asList(
+    public static final List<Meal> MEALS_USER_1 = Arrays.asList(
         new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500),
         new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000),
         new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500),
@@ -29,6 +29,17 @@ public class MealsUtil {
         new Meal(LocalDateTime.of(2015, Month.MAY, 25, 15, 0), "Обед", 1410),
         new Meal(LocalDateTime.of(2015, Month.MAY, 25, 22, 0), "Ужин", 710)
     );
+    public static final List<Meal> MEALS_USER_2 = Arrays.asList(
+        new Meal(LocalDateTime.of(2015, Month.MAY, 20, 10, 0), "Завтрак", 500),
+        new Meal(LocalDateTime.of(2015, Month.MAY, 20, 13, 0), "Обед", 1000),
+        new Meal(LocalDateTime.of(2015, Month.MAY, 20, 20, 0), "Ужин", 500),
+        new Meal(LocalDateTime.of(2015, Month.MAY, 21, 20, 0), "Ужин", 510),
+        new Meal(LocalDateTime.of(2015, Month.MAY, 21, 20, 0), "Ужин", 510),
+        new Meal(LocalDateTime.of(2015, Month.MAY, 25, 10, 0), "Завтрак", 410),
+        new Meal(LocalDateTime.of(2015, Month.MAY, 25, 15, 0), "Обед", 1410),
+        new Meal(LocalDateTime.of(2015, Month.MAY, 25, 22, 0), "Ужин", 710)
+    );
+
     public static final int DEFAULT_CALORIES_PER_DAY = 2000;
 
     public static List<MealWithExceed> getWithExceeded(Collection<Meal> meals, int caloriesPerDay) {

@@ -23,7 +23,7 @@ public class MealServiceImpl implements MealService {
 
     @Override
     public Meal create(final Meal meal, final int userId) {
-        return repository.save(meal, null, userId);
+        return repository.save(meal, userId);
     }
 
     @Override
@@ -38,12 +38,17 @@ public class MealServiceImpl implements MealService {
 
     @Override
     public void update(final Meal meal, final int id, final int userId) {
-        checkNotFoundWithId(repository.save(meal, id, userId), id);
+        checkNotFoundWithId(repository.save(meal, userId), id);
     }
 
     @Override
-    public List<Meal> getAll(final int userId, final LocalDate startDate,
-                             final LocalDate endDate) {
-        return repository.getAll(userId, startDate, endDate);
+    public List<Meal> getAll(final int userId) {
+        return repository.getAll(userId);
+    }
+
+    @Override
+    public List<Meal> getAllBetween(final int userId, final LocalDate startDate,
+                                    final LocalDate endDate) {
+        return repository.getAllBetween(userId, startDate, endDate);
     }
 }
