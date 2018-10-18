@@ -25,7 +25,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     @Override
     public Meal save(final Meal meal, final int userId) {
         Map<Integer, Meal> items =
-            repository.computeIfAbsent(userId, k -> new HashMap<>());
+            repository.computeIfAbsent(userId, HashMap::new);
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             items.put(meal.getId(), meal);
@@ -49,13 +49,15 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
 
     @Override
     public List<Meal> getAll(final int userId) {
-        return new ArrayList<>(repository.get(userId).values());
+        Map<Integer, Meal> meals = repository.get(userId);
+        return meals == null ? new ArrayList<>() : new ArrayList<>(meals.values());
     }
 
     @Override
     public List<Meal> getAllBetween(final int userId, LocalDate startDate,
                                     final LocalDate endDate) {
-        return getAll(userId).stream()
+        Map<Integer, Meal> meals = repository.get(userId);
+        return meals == null ? new ArrayList<>() : meals.values().stream()
             .filter(m -> DateTimeUtil.isBetween(m.getDate(), startDate, endDate))
             .sorted(Comparator
                 .comparing(Meal::getDateTime).reversed()
@@ -63,4 +65,3 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
             .collect(Collectors.toList());
     }
 }
-

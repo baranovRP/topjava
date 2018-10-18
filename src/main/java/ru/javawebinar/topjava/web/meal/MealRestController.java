@@ -23,17 +23,16 @@ import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 public class MealRestController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    @Autowired
     private MealService service;
 
-    public List<Meal> getAll() {
-        log.info("get all");
-        return service.getAll(authUserId());
+    @Autowired
+    public MealRestController(final MealService service) {
+        this.service = service;
     }
 
     public List<MealWithExceed> getAllWithExceeded() {
         log.info("get all with exceeded");
-        return this.getFilteredWithExceeded("", "", "", "");
+        return MealsUtil.getWithExceeded(service.getAll(authUserId()), MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 
     public List<MealWithExceed> getFilteredWithExceeded(final String fromDate,
