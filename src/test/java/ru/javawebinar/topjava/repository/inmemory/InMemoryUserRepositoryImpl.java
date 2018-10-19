@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.UserTestData.ADMIN;
-import static ru.javawebinar.topjava.UserTestData.USER;
+import static ru.javawebinar.topjava.UserTestData.USER_1;
 
 @Repository
 public class InMemoryUserRepositoryImpl implements UserRepository {
@@ -23,7 +23,7 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
 
     public void init() {
         repository.clear();
-        repository.put(UserTestData.USER_ID, USER);
+        repository.put(UserTestData.USER_ID_1, USER_1);
         repository.put(UserTestData.ADMIN_ID, ADMIN);
     }
 

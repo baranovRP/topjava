@@ -41,18 +41,18 @@ public class UserServiceTest {
         User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.ROLE_USER));
         User created = service.create(newUser);
         newUser.setId(created.getId());
-        assertMatch(service.getAll(), ADMIN, newUser, USER);
+        assertMatch(service.getAll(), ADMIN, newUser, USER_1, USER_2);
     }
 
     @Test(expected = DataAccessException.class)
     public void duplicateMailCreate() throws Exception {
-        service.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.ROLE_USER));
+        service.create(new User(null, "Duplicate", "user1@yandex.ru", "newPass", Role.ROLE_USER));
     }
 
     @Test
     public void delete() throws Exception {
-        service.delete(USER_ID);
-        assertMatch(service.getAll(), ADMIN);
+        service.delete(USER_ID_1);
+        assertMatch(service.getAll(), ADMIN, USER_2);
     }
 
     @Test(expected = NotFoundException.class)
@@ -62,8 +62,8 @@ public class UserServiceTest {
 
     @Test
     public void get() throws Exception {
-        User user = service.get(USER_ID);
-        assertMatch(user, USER);
+        User user = service.get(USER_ID_1);
+        assertMatch(user, USER_1);
     }
 
     @Test(expected = NotFoundException.class)
@@ -73,22 +73,22 @@ public class UserServiceTest {
 
     @Test
     public void getByEmail() throws Exception {
-        User user = service.getByEmail("user@yandex.ru");
-        assertMatch(user, USER);
+        User user = service.getByEmail("user1@yandex.ru");
+        assertMatch(user, USER_1);
     }
 
     @Test
     public void update() throws Exception {
-        User updated = new User(USER);
+        User updated = new User(USER_1);
         updated.setName("UpdatedName");
         updated.setCaloriesPerDay(330);
         service.update(updated);
-        assertMatch(service.get(USER_ID), updated);
+        assertMatch(service.get(USER_ID_1), updated);
     }
 
     @Test
     public void getAll() throws Exception {
         List<User> all = service.getAll();
-        assertMatch(all, ADMIN, USER);
+        assertMatch(all, ADMIN, USER_1, USER_2);
     }
 }
