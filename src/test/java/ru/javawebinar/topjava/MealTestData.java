@@ -25,7 +25,7 @@ public class MealTestData {
     public static final Meal MEAL_6_USER_1 = new Meal(MEAL_ID_6, LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510);
 
     public static void assertMatch(Meal actual, Meal expected) {
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).isEqualToComparingFieldByField(expected);
     }
 
     public static void assertMatch(Iterable<Meal> actual, Meal... expected) {
@@ -33,6 +33,6 @@ public class MealTestData {
     }
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).usingFieldByFieldElementComparator().isEqualTo(expected);
     }
 }
