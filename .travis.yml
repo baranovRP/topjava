@@ -1,20 +1,22 @@
-# используем язык java. Travis CI поддерживает другие языки тоже.
+# https://docs.travis-ci.com/user/languages/java/
 language: java
 jdk: oraclejdk8
 
-# используем режим обычного пользователя для сборки проекта.
-sudo: false
+#https://dzone.com/articles/travis-ci-tutorial-java-projects
+cache:
+  directories:
+  - $HOME/.m2
 
-# после выполнения сборки запустить скрипт, который будет собирать статистику по JaCoCo
-# Здесь используется сторонни сервис https://codecov.io/
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+# https://docs.travis-ci.com/user/database-setup/#PostgreSQL
+before_script:
+- psql -c 'create database topjava' -U postgres
+- psql -c 'create user "user"; grant all privileges on database topjava to "user"' -U postgres
 
-# Отправлять уведомление на почту youremail@smtp.ru (Изменить на свою) если сборка упала
-notifications:
-  email:
-    recipients:
-      - baranov.r.p@gmail.com
-    on_success: never # default: change
-    on_failure: always # default: always
+# https://docs.travis-ci.com/user/customizing-the-build#Building-Specific-Branches
+branches:
+  only:
+  - master
 
+# https://docs.travis-ci.com/user/notifications#Configuring-email-notifications
+#notifications:
+#  email: false
