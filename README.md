@@ -1,6 +1,8 @@
 Java Enterprise Online Project 
 ===============================
 
+[![Build Status](https://travis-ci.org/baranovRP/topjava.svg?branch=master)](https://travis-ci.org/baranovRP/topjava)
+[![codecov](https://codecov.io/gh/baranovRP/topjava/branch/master/graph/badge.svg)](https://codecov.io/gh/baranovRP/topjava)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1a2b7cda784145d3ab129ffb5a9431be)](https://app.codacy.com/app/baranovRP/topjava?utm_source=github.com&utm_medium=referral&utm_content=baranovRP/topjava&utm_campaign=Badge_Grade_Dashboard)
 
 Разработка полнофункционального Spring/JPA Enterprise приложения c авторизацией и правами доступа на основе ролей с использованием наиболее популярных инструментов и технологий Java: Maven, Spring MVC, Security, JPA(Hibernate), REST(Jackson), Bootstrap (css,js), datatables, jQuery + plugins, Java 8 Stream and Time API и хранением в базах данных Postgresql и HSQLDB.
