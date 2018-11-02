@@ -1,20 +1,15 @@
-package ru.javawebinar.topjava.service;
+package ru.javawebinar.topjava.service.user;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.dao.DataAccessException;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlConfig;
-import org.springframework.test.context.junit4.SpringRunner;
-import ru.javawebinar.topjava.ActiveDbProfileResolver;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.service.AbstractServiceTest;
+import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.util.Collections;
@@ -23,14 +18,7 @@ import java.util.List;
 
 import static ru.javawebinar.topjava.UserTestData.*;
 
-@ContextConfiguration({
-        "classpath:spring/spring-app.xml",
-        "classpath:spring/spring-db.xml"
-})
-@RunWith(SpringRunner.class)
-@Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-@ActiveProfiles(resolver = ActiveDbProfileResolver.class)
-public class UserServiceTest {
+public abstract class UserServiceTest extends AbstractServiceTest {
 
     static {
         // Only for postgres driver logging
@@ -45,12 +33,13 @@ public class UserServiceTest {
     private CacheManager cacheManager;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         cacheManager.getCache("users").clear();
     }
 
+    @Override
     @Test
-    public void create() throws Exception {
+    public void create() {
         User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.ROLE_USER));
         User created = service.create(newUser);
         newUser.setId(created.getId());
@@ -58,40 +47,44 @@ public class UserServiceTest {
     }
 
     @Test(expected = DataAccessException.class)
-    public void duplicateMailCreate() throws Exception {
+    public void duplicateMailCreate() {
         service.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.ROLE_USER));
     }
 
+    @Override
     @Test
-    public void delete() throws Exception {
+    public void delete() {
         service.delete(USER_ID);
         assertMatch(service.getAll(), ADMIN);
     }
 
     @Test(expected = NotFoundException.class)
-    public void deletedNotFound() throws Exception {
+    public void deletedNotFound() {
         service.delete(1);
     }
 
+    @Override
     @Test
-    public void get() throws Exception {
+    public void get() {
         User user = service.get(USER_ID);
         assertMatch(user, USER);
     }
 
+    @Override
     @Test(expected = NotFoundException.class)
-    public void getNotFound() throws Exception {
+    public void getNotFound() {
         service.get(1);
     }
 
     @Test
-    public void getByEmail() throws Exception {
+    public void getByEmail() {
         User user = service.getByEmail("user@yandex.ru");
         assertMatch(user, USER);
     }
 
+    @Override
     @Test
-    public void update() throws Exception {
+    public void update() {
         User updated = new User(USER);
         updated.setName("UpdatedName");
         updated.setCaloriesPerDay(330);
@@ -99,8 +92,9 @@ public class UserServiceTest {
         assertMatch(service.get(USER_ID), updated);
     }
 
+    @Override
     @Test
-    public void getAll() throws Exception {
+    public void getAll() {
         List<User> all = service.getAll();
         assertMatch(all, ADMIN, USER);
     }
