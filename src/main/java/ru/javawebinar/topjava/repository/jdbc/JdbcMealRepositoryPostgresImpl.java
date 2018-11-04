@@ -27,4 +27,9 @@ public class JdbcMealRepositoryPostgresImpl extends JdbcMealRepositoryAbstractIm
             "SELECT * FROM meals WHERE user_id=?  AND date_time BETWEEN  ? AND ? ORDER BY date_time DESC",
             ROW_MAPPER, userId, startDate, endDate);
     }
+
+    @Override
+    public Meal getWithUser(final int id, final int userId) {
+        return null;
+    }
 }

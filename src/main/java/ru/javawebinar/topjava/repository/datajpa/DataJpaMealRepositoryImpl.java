@@ -41,6 +41,11 @@ public class DataJpaMealRepositoryImpl implements MealRepository {
     }
 
     @Override
+    public Meal getWithUser(final int id, final int userId) {
+        return crudRepository.findWithUser(id, userId);
+    }
+
+    @Override
     public List<Meal> getAll(int userId) {
         return crudRepository.findAllByUserId(SORT_DATE_TIME_DESC, userId);
     }
