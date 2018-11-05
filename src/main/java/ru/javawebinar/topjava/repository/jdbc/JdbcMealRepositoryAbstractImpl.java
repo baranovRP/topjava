@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,7 +33,7 @@ public abstract class JdbcMealRepositoryAbstractImpl implements MealRepository {
             .addValue("id", meal.getId())
             .addValue("description", meal.getDescription())
             .addValue("calories", meal.getCalories())
-            .addValue("date_time", Timestamp.valueOf(meal.getDateTime()))
+            .addValue("date_time", convertDateTime(meal.getDateTime()))
             .addValue("user_id", userId);
 
         if (meal.isNew()) {
@@ -51,6 +50,8 @@ public abstract class JdbcMealRepositoryAbstractImpl implements MealRepository {
         }
         return meal;
     }
+
+    abstract Object convertDateTime(final LocalDateTime dateTime);
 
     @Override
     public boolean delete(int id, int userId) {
@@ -71,6 +72,9 @@ public abstract class JdbcMealRepositoryAbstractImpl implements MealRepository {
     }
 
     @Override
-    public abstract List<Meal> getBetween(final LocalDateTime startDate,
-                                          final LocalDateTime endDate, final int userId);
+    public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
+        return jdbcTemplate.query(
+            "SELECT * FROM meals WHERE user_id=?  AND date_time BETWEEN  ? AND ? ORDER BY date_time DESC",
+            ROW_MAPPER, userId, convertDateTime(startDate), convertDateTime(endDate));
+    }
 }

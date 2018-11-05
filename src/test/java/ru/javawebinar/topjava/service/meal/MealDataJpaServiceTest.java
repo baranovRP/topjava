@@ -1,7 +1,6 @@
 package ru.javawebinar.topjava.service.meal;
 
 import org.junit.Test;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.Profiles;
@@ -15,11 +14,6 @@ import static ru.javawebinar.topjava.UserTestData.*;
 
 @ActiveProfiles(Profiles.DATAJPA)
 public class MealDataJpaServiceTest extends MealServiceTest {
-    static {
-        // needed only for java.util.logging (postgres driver)
-        SLF4JBridgeHandler.install();
-    }
-
     @Autowired
     private MealService mealService;
 

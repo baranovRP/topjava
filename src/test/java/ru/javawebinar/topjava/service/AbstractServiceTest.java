@@ -2,12 +2,12 @@ package ru.javawebinar.topjava.service;
 
 import org.junit.AfterClass;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -29,6 +29,12 @@ import static org.slf4j.LoggerFactory.getLogger;
 public abstract class AbstractServiceTest {
     private static final Logger log = getLogger("result");
     private static StringBuilder results = new StringBuilder();
+
+    static {
+        // Only for postgres driver logging
+        // It uses java.util.logging and logged via jul-to-slf4j bridge
+        SLF4JBridgeHandler.install();
+    }
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -55,35 +61,19 @@ public abstract class AbstractServiceTest {
             "\n-----------------------------------------------------");
     }
 
-    @Test
-    public void delete() {
-    }
+    public abstract void delete();
 
-    @Test
-    public void deleteNotFound() {
-    }
+    public abstract void deleteNotFound();
 
-    @Test
-    public void create() {
-    }
+    public abstract void create();
 
-    @Test
-    public void get() {
-    }
+    public abstract void get();
 
-    @Test
-    public void getNotFound() {
-    }
+    public abstract void getNotFound();
 
-    @Test
-    public void update() {
-    }
+    public abstract void update();
 
-    @Test
-    public void updateNotFound() {
-    }
+    public abstract void updateNotFound();
 
-    @Test
-    public void getAll() {
-    }
+    public abstract void getAll();
 }

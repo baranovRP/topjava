@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.service.user;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.dao.DataAccessException;
@@ -19,13 +18,6 @@ import java.util.List;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 public abstract class UserServiceTest extends AbstractServiceTest {
-
-    static {
-        // Only for postgres driver logging
-        // It uses java.util.logging and logged via jul-to-slf4j bridge
-        SLF4JBridgeHandler.install();
-    }
-
     @Autowired
     private UserService service;
 
@@ -58,8 +50,9 @@ public abstract class UserServiceTest extends AbstractServiceTest {
         assertMatch(service.getAll(), ADMIN);
     }
 
+    @Override
     @Test(expected = NotFoundException.class)
-    public void deletedNotFound() {
+    public void deleteNotFound() {
         service.delete(1);
     }
 
@@ -97,5 +90,10 @@ public abstract class UserServiceTest extends AbstractServiceTest {
     public void getAll() {
         List<User> all = service.getAll();
         assertMatch(all, ADMIN, USER);
+    }
+
+    @Override
+    public void updateNotFound() {
+        throw new UnsupportedOperationException();
     }
 }
