@@ -20,7 +20,7 @@ public class JdbcMealRepositoryPostgresImpl extends JdbcMealRepositoryAbstractIm
     }
 
     @Override
-    Object convertDateTime(LocalDateTime dateTime) {
+    LocalDateTime convertDateTime(LocalDateTime dateTime) {
         return dateTime;
     }
 }

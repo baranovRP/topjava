@@ -1,6 +1,8 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.Stopwatch;
@@ -52,6 +54,11 @@ public abstract class AbstractServiceTest {
         }
     };
 
+    @BeforeClass
+    public static void tearUp() {
+        results = new StringBuilder();
+    }
+
     @AfterClass
     public static void printResult() {
         log.info("\n-----------------------------------------------------" +
@@ -60,20 +67,4 @@ public abstract class AbstractServiceTest {
             results +
             "\n-----------------------------------------------------");
     }
-
-    public abstract void delete();
-
-    public abstract void deleteNotFound();
-
-    public abstract void create();
-
-    public abstract void get();
-
-    public abstract void getNotFound();
-
-    public abstract void update();
-
-    public abstract void updateNotFound();
-
-    public abstract void getAll();
 }

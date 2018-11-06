@@ -51,7 +51,7 @@ public abstract class JdbcMealRepositoryAbstractImpl implements MealRepository {
         return meal;
     }
 
-    abstract Object convertDateTime(final LocalDateTime dateTime);
+    abstract <T> T convertDateTime(final LocalDateTime dateTime);
 
     @Override
     public boolean delete(int id, int userId) {

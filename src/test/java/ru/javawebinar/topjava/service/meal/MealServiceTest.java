@@ -18,21 +18,18 @@ public abstract class MealServiceTest extends AbstractServiceTest {
     @Autowired
     private MealService service;
 
-    @Override
     @Test
     public void delete() {
         service.delete(MEAL1_ID, USER_ID);
         assertMatch(service.getAll(USER_ID), MEAL6, MEAL5, MEAL4, MEAL3, MEAL2);
     }
 
-    @Override
     @Test
     public void deleteNotFound() {
         thrown.expect(NotFoundException.class);
         service.delete(MEAL1_ID, 1);
     }
 
-    @Override
     @Test
     public void create() {
         Meal created = getCreated();
@@ -40,21 +37,18 @@ public abstract class MealServiceTest extends AbstractServiceTest {
         assertMatch(service.getAll(USER_ID), created, MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1);
     }
 
-    @Override
     @Test
     public void get() {
         Meal actual = service.get(ADMIN_MEAL_ID, ADMIN_ID);
         assertMatch(actual, ADMIN_MEAL1);
     }
 
-    @Override
     @Test
     public void getNotFound() {
         thrown.expect(NotFoundException.class);
         service.get(MEAL1_ID, ADMIN_ID);
     }
 
-    @Override
     @Test
     public void update() {
         Meal updated = getUpdated();
@@ -62,7 +56,6 @@ public abstract class MealServiceTest extends AbstractServiceTest {
         assertMatch(service.get(MEAL1_ID, USER_ID), updated);
     }
 
-    @Override
     @Test
     public void updateNotFound() {
         thrown.expect(NotFoundException.class);
@@ -70,7 +63,6 @@ public abstract class MealServiceTest extends AbstractServiceTest {
         service.update(MEAL1, ADMIN_ID);
     }
 
-    @Override
     @Test
     public void getAll() {
         assertMatch(service.getAll(USER_ID), MEALS);

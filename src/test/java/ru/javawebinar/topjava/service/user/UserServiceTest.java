@@ -29,7 +29,6 @@ public abstract class UserServiceTest extends AbstractServiceTest {
         cacheManager.getCache("users").clear();
     }
 
-    @Override
     @Test
     public void create() {
         User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.ROLE_USER));
@@ -43,27 +42,23 @@ public abstract class UserServiceTest extends AbstractServiceTest {
         service.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.ROLE_USER));
     }
 
-    @Override
     @Test
     public void delete() {
         service.delete(USER_ID);
         assertMatch(service.getAll(), ADMIN);
     }
 
-    @Override
     @Test(expected = NotFoundException.class)
     public void deleteNotFound() {
         service.delete(1);
     }
 
-    @Override
     @Test
     public void get() {
         User user = service.get(USER_ID);
         assertMatch(user, USER);
     }
 
-    @Override
     @Test(expected = NotFoundException.class)
     public void getNotFound() {
         service.get(1);
@@ -75,7 +70,6 @@ public abstract class UserServiceTest extends AbstractServiceTest {
         assertMatch(user, USER);
     }
 
-    @Override
     @Test
     public void update() {
         User updated = new User(USER);
@@ -85,14 +79,12 @@ public abstract class UserServiceTest extends AbstractServiceTest {
         assertMatch(service.get(USER_ID), updated);
     }
 
-    @Override
     @Test
     public void getAll() {
         List<User> all = service.getAll();
         assertMatch(all, ADMIN, USER);
     }
 
-    @Override
     public void updateNotFound() {
         throw new UnsupportedOperationException();
     }
