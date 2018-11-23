@@ -37,7 +37,7 @@ public class MealTestData {
     }
 
     public static void assertMatch(Meal actual, Meal expected) {
-        assertThat(actual).isEqualToIgnoringGivenFields(expected, "user");
+        assertThat(actual).isEqualToIgnoringGivenFields(expected, "user", "excess");
     }
 
     public static void assertMatch(Iterable<Meal> actual, Meal... expected) {
@@ -45,7 +45,7 @@ public class MealTestData {
     }
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
-        assertThat(actual).usingElementComparatorIgnoringFields("user").isEqualTo(expected);
+        assertThat(actual).usingElementComparatorIgnoringFields("user", "excess").isEqualTo(expected);
     }
 
     public static ResultMatcher contentJson(Meal... expected) {
