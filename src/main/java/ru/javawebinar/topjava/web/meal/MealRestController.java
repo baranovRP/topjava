@@ -1,7 +1,7 @@
 package ru.javawebinar.topjava.web.meal;
 
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +16,9 @@ import java.util.List;
 @RequestMapping(MealRestController.REST_URL)
 public class MealRestController extends AbstractMealController {
     static final String REST_URL = "/rest/meals";
+
+    @Autowired
+    ConversionService conversionService;
 
     @Override
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -51,12 +54,26 @@ public class MealRestController extends AbstractMealController {
         return super.getAll();
     }
 
-    @Override
+    // With default Spring Conversion Service
+//    @Override
+//    @GetMapping(value = "/between", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public List<MealTo> getBetween(@RequestParam("startDate") @DateTimeFormat(iso = ISO.DATE) LocalDate startDate,
+//                                   @RequestParam("startTime") @DateTimeFormat(iso = ISO.TIME) LocalTime startTime,
+//                                   @RequestParam("endDate") @DateTimeFormat(iso = ISO.DATE) LocalDate endDate,
+//                                   @RequestParam("endTime") @DateTimeFormat(iso = ISO.TIME) LocalTime endTime) {
+//        return super.getBetween(startDate, startTime, endDate, endTime);
+//    }
+
+    // With ustom SPI converters
     @GetMapping(value = "/between", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<MealTo> getBetween(@RequestParam("startDate") @DateTimeFormat(iso = ISO.DATE) LocalDate startDate,
-                                   @RequestParam("startTime") @DateTimeFormat(iso = ISO.TIME) LocalTime startTime,
-                                   @RequestParam("endDate") @DateTimeFormat(iso = ISO.DATE) LocalDate endDate,
-                                   @RequestParam("endTime") @DateTimeFormat(iso = ISO.TIME) LocalTime endTime) {
+    public List<MealTo> getBetween(@RequestParam("startDate") String startDateParam,
+                                   @RequestParam("startTime") String startTimeParam,
+                                   @RequestParam("endDate") String endDateParam,
+                                   @RequestParam("endTime") String endTimeParam) {
+        LocalDate startDate = conversionService.convert(startDateParam, LocalDate.class);
+        LocalTime startTime = conversionService.convert(startTimeParam, LocalTime.class);
+        LocalDate endDate = conversionService.convert(endDateParam, LocalDate.class);
+        LocalTime endTime = conversionService.convert(endTimeParam, LocalTime.class);
         return super.getBetween(startDate, startTime, endDate, endTime);
     }
 }
