@@ -3,8 +3,10 @@ package ru.javawebinar.topjava.web;
 import org.assertj.core.matcher.AssertionMatcher;
 import org.junit.jupiter.api.Test;
 import ru.javawebinar.topjava.MealTestData;
-import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.MealsUtil;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -35,16 +37,20 @@ class RootControllerTest extends AbstractControllerTest {
 
     @Test
     void testMeals() throws Exception {
+        List<MealTo> expected = MealsUtil.getWithExcess(
+            Arrays.asList(MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1),
+            MealsUtil.DEFAULT_CALORIES_PER_DAY
+        );
         mockMvc.perform(get("/meals"))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(view().name("meals"))
             .andExpect(forwardedUrl("/WEB-INF/jsp/meals.jsp"))
             .andExpect(model().attribute("meals", hasSize(6)))
-            .andExpect(model().attribute("meals", new AssertionMatcher<List<Meal>>() {
+            .andExpect(model().attribute("meals", new AssertionMatcher<List<MealTo>>() {
                 @Override
-                public void assertion(List<Meal> actual) throws AssertionError {
-                    MealTestData.assertMatch(actual, MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1);
+                public void assertion(List<MealTo> actual) throws AssertionError {
+                    MealTestData.assertMatch(actual, expected);
                 }
             }));
     }

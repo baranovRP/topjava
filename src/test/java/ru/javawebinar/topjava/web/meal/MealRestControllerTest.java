@@ -8,8 +8,13 @@ import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.TestUtil;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
+import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -71,27 +76,39 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetAll() throws Exception {
+        List<MealTo> expected = MealsUtil.getWithExcess(
+            Arrays.asList(MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1),
+            MealsUtil.DEFAULT_CALORIES_PER_DAY
+        );
         TestUtil.print(mockMvc.perform(get(REST_URL))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(contentJson(MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1)));
+            .andExpect(contentJson(expected)));
     }
 
     @Test
     public void testGetBetween() throws Exception {
+        List<MealTo> expected = MealsUtil.getWithExcess(
+            Arrays.asList(MEAL3, MEAL2),
+            MealsUtil.DEFAULT_CALORIES_PER_DAY
+        );
         TestUtil.print(mockMvc.perform(get(REST_URL + "between?startDate=2015-05-29&endDate=2015-05-30&startTime=10:15&endTime=22:15"))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(contentJson(MEAL3, MEAL2)));
+            .andExpect(contentJson(expected)));
     }
 
     @Test
     public void testGetBetweenNotAllParams() throws Exception {
+        List<MealTo> expected = MealsUtil.getWithExcess(
+            Arrays.asList(MEAL3, MEAL2),
+            MealsUtil.DEFAULT_CALORIES_PER_DAY
+        );
         TestUtil.print(mockMvc.perform(get(REST_URL + "between?startDate=&endDate=2015-05-30&startTime=10:15&endTime="))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(contentJson(MEAL3, MEAL2)));
+            .andExpect(contentJson(expected)));
     }
 }
