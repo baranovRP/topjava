@@ -33,3 +33,19 @@ $(function () {
     });
     makeEditable();
 });
+
+function filter() {
+    let form = $("#filterForm");
+    $.ajax({
+        type: "POST",
+        url: ajaxUrl + "filter",
+        data: form.serialize()
+    }).done(function (data) {
+        datatableApi.clear().rows.add(data).draw();
+    });
+}
+
+function reset() {
+    $("#filterForm").find(":input").val("");
+    updateTable();
+}
