@@ -40,3 +40,17 @@ $(function () {
     });
     makeEditable();
 });
+
+function enableOrDisable(event) {
+    let id = $(event.target).closest("tr").attr("id");
+    let isActive = $(event.target).is(":checked");
+    $.ajax({
+        type: "POST",
+        url: ajaxUrl + id,
+        data: {
+            "state": isActive
+        }
+    }).done(function (data) {
+        updateTable();
+    });
+}

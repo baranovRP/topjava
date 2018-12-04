@@ -18,6 +18,8 @@ public interface UserService {
 
     void update(User user);
 
+    void enableOrDisable(int id, boolean state)throws NotFoundException;
+
     List<User> getAll();
 
     User getWithMeals(int id);

@@ -10,6 +10,10 @@ public interface UserRepository {
     // false if not found
     boolean delete(int id);
 
+    default boolean enableOrDisable(int id, boolean state) {
+        throw new UnsupportedOperationException();
+    }
+
     // null if not found
     User get(int id);
 

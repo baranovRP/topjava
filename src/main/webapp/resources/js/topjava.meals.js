@@ -49,3 +49,16 @@ function reset() {
     $("#filterForm").find(":input").val("");
     updateTable();
 }
+
+function saveMeal() {
+    let form = $("#detailsForm");
+    $.ajax({
+        type: "POST",
+        url: ajaxUrl,
+        data: form.serialize()
+    }).done(function () {
+        $("#editRow").modal("hide");
+        filter();
+        successNoty("Saved");
+    });
+}

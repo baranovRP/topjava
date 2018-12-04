@@ -61,6 +61,13 @@ public class UserServiceImpl implements UserService {
         checkNotFoundWithId(repository.save(user), user.getId());
     }
 
+    @CacheEvict(value = "users", allEntries = true)
+    @Override
+    public void enableOrDisable(int id, boolean state) {
+        Assert.notNull(state, "state must not be null");
+        checkNotFoundWithId(repository.enableOrDisable(id, state), id);
+    }
+
     @Override
     public User getWithMeals(int id) {
         return checkNotFoundWithId(repository.getWithMeals(id), id);

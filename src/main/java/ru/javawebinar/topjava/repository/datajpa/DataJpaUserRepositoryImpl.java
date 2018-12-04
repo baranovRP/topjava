@@ -26,6 +26,11 @@ public class DataJpaUserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public boolean enableOrDisable(int id, boolean state) {
+        return crudRepository.enableOrDisable(id, state) != 0;
+    }
+
+    @Override
     public User get(int id) {
         return crudRepository.findById(id).orElse(null);
     }
