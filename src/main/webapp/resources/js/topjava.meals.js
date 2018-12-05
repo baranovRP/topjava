@@ -27,7 +27,7 @@ $(function () {
         "order": [
             [
                 0,
-                "asc"
+                "desc"
             ]
         ]
     });
@@ -41,12 +41,12 @@ function filter() {
         url: ajaxUrl + "filter",
         data: form.serialize()
     }).done(function (data) {
-        datatableApi.clear().rows.add(data).draw();
+        clearAndDrawRows(data)
     });
 }
 
 function reset() {
-    $("#filterForm").find(":input").val("");
+    $("#filterForm").trigger("reset");
     updateTable();
 }
 

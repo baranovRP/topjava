@@ -64,7 +64,6 @@ public class UserServiceImpl implements UserService {
     @CacheEvict(value = "users", allEntries = true)
     @Override
     public void enableOrDisable(int id, boolean state) {
-        Assert.notNull(state, "state must not be null");
         checkNotFoundWithId(repository.enableOrDisable(id, state), id);
     }
 

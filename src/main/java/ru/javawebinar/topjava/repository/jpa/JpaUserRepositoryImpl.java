@@ -59,6 +59,15 @@ public class JpaUserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    @Transactional
+    public boolean enableOrDisable(int id, boolean state) {
+        return em.createNamedQuery(User.ENABLE_OR_DISABLE)
+            .setParameter("id", id)
+            .setParameter("state", state)
+            .executeUpdate() != 0;
+    }
+
+    @Override
     public User getByEmail(String email) {
         List<User> users = em.createNamedQuery(User.BY_EMAIL, User.class)
                 .setParameter(1, email)

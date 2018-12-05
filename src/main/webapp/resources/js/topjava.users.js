@@ -50,7 +50,7 @@ function enableOrDisable(event) {
         data: {
             "state": isActive
         }
-    }).done(function (data) {
+    }).done(function () {
         updateTable();
     });
 }

@@ -69,6 +69,12 @@ public class JdbcUserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    @Transactional
+    public boolean enableOrDisable(int id, boolean state) {
+        return jdbcTemplate.update("UPDATE users SET enabled=? WHERE id=?", state, id) != 0;
+    }
+
+    @Override
     public User get(int id) {
         List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
         return setRoles(DataAccessUtils.singleResult(users));
