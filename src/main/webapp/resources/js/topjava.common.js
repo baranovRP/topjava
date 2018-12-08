@@ -12,13 +12,13 @@ function makeEditable(ctx) {
 }
 
 function add() {
-    $("#modalTitle").html(i18n["addTitle"]);
+    $("#modalTitle").html(i18nTitles["addTitle"]);
     form.find(":input").val("");
     $("#editRow").modal();
 }
 
 function updateRow(id) {
-    $("#modalTitle").html(i18n["editTitle"]);
+    $("#modalTitle").html(i18nTitles["editTitle"]);
     $.get(context.ajaxUrl + id, function (data) {
         $.each(data, function (key, value) {
             form.find("input[name='" + key + "']").val(value);
