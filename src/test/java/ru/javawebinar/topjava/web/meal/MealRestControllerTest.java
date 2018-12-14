@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javawebinar.topjava.MealTestData.assertMatch;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.TestUtil.*;
 import static ru.javawebinar.topjava.UserTestData.*;
@@ -37,7 +38,6 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(result -> assertMatch(readFromJsonMvcResult(result, Meal.class), ADMIN_MEAL1));
     }
-
 
     @Test
     void testGetUnauth() throws Exception {
@@ -82,6 +82,18 @@ class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void testUpdateUnprocessableEntity() throws Exception {
+        Meal updated = getUpdated().setCalories(0);
+        mockMvc.perform(put(REST_URL + MEAL1_ID)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(JsonUtil.writeValue(updated))
+            .with(userHttpBasic(USER)))
+            .andDo(print())
+            .andExpect(status().isUnprocessableEntity());
+        assertMatch(service.get(MEAL1_ID, START_SEQ), MEAL1);
+    }
+
+    @Test
     void testCreate() throws Exception {
         Meal created = getCreated();
         ResultActions action = mockMvc.perform(post(REST_URL)
@@ -94,6 +106,18 @@ class MealRestControllerTest extends AbstractControllerTest {
 
         assertMatch(returned, created);
         assertMatch(service.getAll(ADMIN_ID), ADMIN_MEAL2, created, ADMIN_MEAL1);
+    }
+
+    @Test
+    void testCreateUnprocessableEntity() throws Exception {
+        Meal created = getCreated().setDateTime(null);
+        mockMvc.perform(post(REST_URL)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(JsonUtil.writeValue(created))
+            .with(userHttpBasic(ADMIN)))
+            .andDo(print())
+            .andExpect(status().isUnprocessableEntity());
+        assertMatch(service.getAll(ADMIN_ID), ADMIN_MEAL2, ADMIN_MEAL1);
     }
 
     @Test

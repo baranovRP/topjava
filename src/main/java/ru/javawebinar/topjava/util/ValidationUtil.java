@@ -1,8 +1,6 @@
 package ru.javawebinar.topjava.util;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.BindException;
 import ru.javawebinar.topjava.HasId;
 import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -59,19 +57,19 @@ public class ValidationUtil {
         return result;
     }
 
-    public static ResponseEntity<String> getErrorResponse(BindingResult result) {
-        StringJoiner joiner = new StringJoiner("<br>");
-        result.getFieldErrors().forEach(
-                fe -> {
-                    String msg = fe.getDefaultMessage();
-                    if (msg != null) {
-                        if (!msg.startsWith(fe.getField())) {
-                            msg = fe.getField() + ' ' + msg;
-                        }
-                        joiner.add(msg);
+    public static String getBindErrorMsg(final BindException e) {
+        StringJoiner joiner = new StringJoiner("</br>");
+        e.getFieldErrors().forEach(
+            fe -> {
+                String msg = fe.getDefaultMessage();
+                if (msg != null) {
+                    if (!msg.startsWith(fe.getField())) {
+                        msg = fe.getField() + ' ' + msg;
                     }
-                });
-        return new ResponseEntity<>(joiner.toString(), HttpStatus.UNPROCESSABLE_ENTITY);
+                    joiner.add(msg);
+                }
+            });
+        return joiner.toString();
     }
 
     public static String getMessage(Throwable e) {
