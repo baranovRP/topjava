@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,11 +23,17 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.Objects;
+
 import static ru.javawebinar.topjava.util.exception.ErrorType.*;
 
 @RestControllerAdvice(annotations = RestController.class)
 @Order(Ordered.HIGHEST_PRECEDENCE + 5)
 public class ExceptionInfoHandler {
+
+    @Autowired
+    private AppMessageUtil appMessageUtil;
+
     private static Logger log = LoggerFactory.getLogger(ExceptionInfoHandler.class);
 
     //  http://stackoverflow.com/a/22358422/548473
@@ -39,6 +46,10 @@ public class ExceptionInfoHandler {
     @ResponseStatus(value = HttpStatus.CONFLICT)  // 409
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
+        if (Objects.requireNonNull(e.getRootCause()).getMessage().contains("users_unique_email_idx")) {
+            return logAndGetErrorInfo(req, e, true, DATA_ERROR,
+                appMessageUtil.getMessage("user.uniqueEmailExp"));
+        }
         return logAndGetErrorInfo(req, e, true, DATA_ERROR);
     }
 
@@ -47,6 +58,10 @@ public class ExceptionInfoHandler {
         MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class,
         MethodArgumentNotValidException.class})
     public ErrorInfo illegalRequestDataError(HttpServletRequest req, Exception e) {
+        if (e instanceof BindException) {
+            return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR,
+                ValidationUtil.getBindErrorMsg((BindException) e));
+        }
         return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
     }
 
@@ -56,16 +71,23 @@ public class ExceptionInfoHandler {
         return logAndGetErrorInfo(req, e, true, APP_ERROR);
     }
 
-//    https://stackoverflow.com/questions/538870/should-private-helper-methods-be-static-if-they-can-be-static
+    //    https://stackoverflow.com/questions/538870/should-private-helper-methods-be-static-if-they-can-be-static
     private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType) {
         Throwable rootCause = ValidationUtil.getRootCause(e);
+        logException(req, logException, errorType, rootCause);
+        return new ErrorInfo(req.getRequestURL(), errorType, ValidationUtil.getMessage(rootCause));
+    }
+
+    private ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType, String errMessage) {
+        logException(req, logException, errorType, ValidationUtil.getRootCause(e));
+        return new ErrorInfo(req.getRequestURL(), errorType, errMessage);
+    }
+
+    private static void logException(final HttpServletRequest req, final boolean logException, final ErrorType errorType, final Throwable rootCause) {
         if (logException) {
             log.error(errorType + " at request " + req.getRequestURL(), rootCause);
         } else {
             log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
         }
-        String message = (e instanceof BindException)
-            ? ValidationUtil.getBindErrorMsg((BindException) e) : ValidationUtil.getMessage(rootCause);
-        return new ErrorInfo(req.getRequestURL(), errorType, message);
     }
 }
